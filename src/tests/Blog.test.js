@@ -25,33 +25,4 @@ describe('<Blog />', () => {
         expect(headerDiv.text()).to.include(blog.title)
         expect(headerDiv.text()).to.include(blog.author)
     })
-
-    it('does not show details by default', () => {
-
-        const blogComponent = shallow(<Blog blog={blog} />)
-        const detailsDiv = blogComponent.find('.details')
-
-        expect(detailsDiv.getElement().props.style).to.deep.equal({ display: 'none' })
-    })
-
-    it('clicking header shows blog details', () => {
-
-        const mockHandler = sinon.spy()
-        const blogComponent = shallow(<Blog blog={blog} />)
-        const headerDiv = blogComponent.find('.header')
-        let detailsDiv = blogComponent.find('.details')
-
-        expect(detailsDiv.getElement().props.style).to.deep.equal({ display: 'none' })
-
-        // Simulate clicking the header div
-        headerDiv.simulate('click')
-
-        // Force re-render
-        blogComponent.update()
-
-        // Get updated details div
-        detailsDiv = blogComponent.find('.details')
-
-        expect(detailsDiv.getElement().props.style).to.deep.equal({ display: '' })
-    })
 })

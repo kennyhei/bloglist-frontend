@@ -5,12 +5,14 @@ import thunk from 'redux-thunk'
 import { Provider } from 'react-redux'
 import blogReducer from './reducers/blogReducer'
 import userReducer from './reducers/userReducer'
+import notificationReducer from './reducers/notificationReducer'
 import App from './App'
 import './index.css'
 
 const reducer = combineReducers({
     blogs: blogReducer,
-    users: userReducer
+    users: userReducer,
+    notification: notificationReducer
 })
 
 const store = createStore(reducer, applyMiddleware(thunk))

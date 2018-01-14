@@ -9,8 +9,9 @@ import Togglable from './components/Togglable'
 import UserList from './components/UserList'
 import User from './components/User'
 import { connect } from 'react-redux'
-import { initializeBlogs } from './reducers/blogReducer'
+import { initializeBlogs, createBlog } from './reducers/blogReducer'
 import { initializeUsers } from './reducers/userReducer'
+import { notify } from './reducers/notificationReducer'
 
 import { BrowserRouter as Router, Route, Link, Redirect } from 'react-router-dom'
 
@@ -20,11 +21,6 @@ class App extends React.Component {
 
         this.state = {
             users: [],
-
-            message: {
-                type: 'info',
-                content: null
-            },
 
             // Blog fields
             new_title: '',
@@ -69,32 +65,21 @@ class App extends React.Component {
     addBlog = async (e) => {
         e.preventDefault()
 
-        const blogObject = {
-            title: this.state.new_title,
-            author: this.state.new_author,
-            url: this.state.new_url
-        }
+        this.props.createBlog(
+            this.state.new_title,
+            this.state.new_author,
+            this.state.new_url
+        )
 
-        try {
+        this.props.notify(`A new blog '${this.state.new_title}' by ${this.state.new_author} added`, 'info', 3)
 
-            const savedBlog = await blogService.create(blogObject)
-            this.setState({
-                blogs: this.state.blogs.concat(savedBlog),
-                new_title: '',
-                new_author: '',
-                new_url: '',
-                message: {
-                    ...this.state.message,
-                    content: `A new blog '${savedBlog.title}' by ${savedBlog.author} added`
-                }
-            })
+        this.setState({
+            new_title: '',
+            new_author: '',
+            new_url: ''
+        })
 
-            this.blogForm.toggleVisibility()
-
-            this.messageTimeout()
-        } catch (error) {
-            console.log('could not add blog', error)
-        }
+        this.blogForm.toggleVisibility()
     }
 
     likeBlog = (id) => {
@@ -120,7 +105,7 @@ class App extends React.Component {
 
             await blogService.remove(id)
             
-            const blogs = this.state.blogs.filter(b => b.id !== id)
+            const blogs = this.props.blogs.filter(b => b.id !== id)
             this.setState({ blogs })
         }
     }
@@ -145,14 +130,7 @@ class App extends React.Component {
                 user })
 
         } catch (error) {
-            this.setState({
-                message: {
-                    content: 'wrong username or password',
-                    type: 'error'
-                }
-            })
-
-            this.messageTimeout()
+            this.props.notify('wrong username or password', 'error', 3)
         }
     }
 
@@ -163,18 +141,12 @@ class App extends React.Component {
         this.setState({ user: null })
     }
 
-    messageTimeout = () => {
-        setTimeout(() => {
-            this.setState({ message: { type: 'info', content: null } })
-        }, 3000)
-    }
-
     render() {
 
         const findBlogById = (id) => {
 
-            console.log(this.state.blogs)
-            const blog = this.state.blogs.find(b => {
+            console.log(this.props.blogs)
+            const blog = this.props.blogs.find(b => {
 
                 return b.id === id
             })
@@ -182,7 +154,7 @@ class App extends React.Component {
             return blog
         }
 
-        const findUserById = (id) => this.state.users.find(u => u.id === id)
+        const findUserById = (id) => this.props.users.find(u => u.id === id)
 
         const view = () => {
             console.log(this.props.blogs)
@@ -242,7 +214,7 @@ class App extends React.Component {
 
                         <h2>Blog app</h2>
 
-                        <Notification message={this.state.message} />
+                        <Notification />
                     
                         <Route exact path="/" render={() => <Redirect to="/blogs" />} />
                         <Route exact path="/blogs" render={() => view()} />
@@ -277,6 +249,13 @@ const mapStateToProps = (state) => {
     }
 }
 
-const ConnectedApp = connect(mapStateToProps, { initializeBlogs, initializeUsers })(App)
+const mapDispatchToProps = {
+    initializeBlogs,
+    initializeUsers,
+    createBlog,
+    notify
+}
+
+const ConnectedApp = connect(mapStateToProps, mapDispatchToProps)(App)
 
 export default ConnectedApp

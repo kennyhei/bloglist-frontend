@@ -9,7 +9,7 @@ import Togglable from './components/Togglable'
 import UserList from './components/UserList'
 import User from './components/User'
 import { connect } from 'react-redux'
-import { initializeBlogs, createBlog, deleteBlog } from './reducers/blogReducer'
+import { initializeBlogs, createBlog, deleteBlog, likeBlog } from './reducers/blogReducer'
 import { initializeUsers } from './reducers/userReducer'
 import { notify } from './reducers/notificationReducer'
 
@@ -82,20 +82,11 @@ class App extends React.Component {
         this.blogForm.toggleVisibility()
     }
 
-    likeBlog = (id) => {
+    likeBlog = (blog) => {
 
         return async () => {
 
-            const blog = this.state.blogs.find(b => b.id === id)
-            const changedBlog = { ...blog, likes: blog.likes + 1 }
-
-            const updatedBlog = await blogService.update(id, changedBlog)
-            
-            // Get blogs which weren't affected by the update
-            const blogs = this.state.blogs.filter(b => b.id !== id)
-
-            // Add updated blog to blogs
-            this.setState({ blogs: blogs.concat(updatedBlog) })
+            this.props.likeBlog(blog)
         }
     }
 
@@ -142,7 +133,6 @@ class App extends React.Component {
 
         const findBlogById = (id) => {
 
-            console.log(this.props.blogs)
             const blog = this.props.blogs.find(b => {
 
                 return b.id === id
@@ -154,7 +144,6 @@ class App extends React.Component {
         const findUserById = (id) => this.props.users.find(u => u.id === id)
 
         const view = () => {
-            console.log(this.props.blogs)
             if (this.state.user === null) {
                 return (
                     <div>
@@ -223,7 +212,7 @@ class App extends React.Component {
                             return (<Blog
                                 blog={blog}
                                 loggedUser={this.state.user}
-                                handleLike={this.likeBlog(blog.id)}
+                                handleLike={this.likeBlog(blog)}
                                 handleDelete={this.deleteBlog(blog.id, history)}
                             />)
                         }} />
@@ -251,6 +240,7 @@ const mapDispatchToProps = {
     initializeUsers,
     createBlog,
     deleteBlog,
+    likeBlog,
     notify
 }
 

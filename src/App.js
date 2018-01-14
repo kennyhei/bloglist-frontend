@@ -2,13 +2,15 @@ import React from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
-import userService from './services/users'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import UserList from './components/UserList'
 import User from './components/User'
+import { connect } from 'react-redux'
+import { initializeBlogs } from './reducers/blogReducer'
+import { initializeUsers } from './reducers/userReducer'
 
 import { BrowserRouter as Router, Route, Link, Redirect } from 'react-router-dom'
 
@@ -17,7 +19,6 @@ class App extends React.Component {
         super(props)
 
         this.state = {
-            blogs: [],
             users: [],
 
             message: {
@@ -53,12 +54,8 @@ class App extends React.Component {
             this.setState({ users })
         }
 
-        const blogs = await blogService.getAll()
-        const users = await userService.getAll()
-
-        window.localStorage.setItem('users', JSON.stringify(users))
-
-        this.setState({ blogs, users })
+        this.props.initializeBlogs()
+        this.props.initializeUsers()
     }
 
     handleBlogFieldChange = (e) => {
@@ -188,7 +185,7 @@ class App extends React.Component {
         const findUserById = (id) => this.state.users.find(u => u.id === id)
 
         const view = () => {
-            console.log(this.state.blogs)
+            console.log(this.props.blogs)
             if (this.state.user === null) {
                 return (
                     <div>
@@ -203,7 +200,7 @@ class App extends React.Component {
             } else {
     
                 const sortByLikes = (blog1, blog2) => blog1.likes > blog2.likes ? -1 : 1
-                const sortedBlogs = this.state.blogs.slice().sort(sortByLikes) 
+                const sortedBlogs = this.props.blogs.slice().sort(sortByLikes) 
     
                 return (
                     <div>
@@ -249,7 +246,7 @@ class App extends React.Component {
                     
                         <Route exact path="/" render={() => <Redirect to="/blogs" />} />
                         <Route exact path="/blogs" render={() => view()} />
-                        <Route exact path="/users" render={() => <UserList users={this.state.users} />} />
+                        <Route exact path="/users" render={() => <UserList users={this.props.users} />} />
                         <Route exact path="/blogs/:id" render={({match}) => {
 
                             const blog = findBlogById(match.params.id)
@@ -272,4 +269,14 @@ class App extends React.Component {
     }
 }
 
-export default App
+const mapStateToProps = (state) => {
+
+    return {
+        blogs: state.blogs,
+        users: state.users
+    }
+}
+
+const ConnectedApp = connect(mapStateToProps, { initializeBlogs, initializeUsers })(App)
+
+export default ConnectedApp

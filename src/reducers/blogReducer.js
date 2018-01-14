@@ -10,6 +10,10 @@ const blogReducer = (state = [], action) => {
         case 'NEW_BLOG':
             return [ ...state, action.data ]
 
+        case 'DELETE_BLOG':
+            const remainingBlogs = state.filter(b => b.id !== action.id)
+            return remainingBlogs
+
         default:
             return state
     }
@@ -41,6 +45,18 @@ export const createBlog = (title, author, url) => {
         dispatch({
             type: 'NEW_BLOG',
             data: newBlog
+        })
+    }
+}
+
+export const deleteBlog = (id) => {
+
+    return async (dispatch) => {
+
+        await blogService.remove(id)
+        dispatch({
+            type: 'DELETE_BLOG',
+            id
         })
     }
 }

@@ -9,7 +9,7 @@ import Togglable from './components/Togglable'
 import UserList from './components/UserList'
 import User from './components/User'
 import { connect } from 'react-redux'
-import { initializeBlogs, createBlog } from './reducers/blogReducer'
+import { initializeBlogs, createBlog, deleteBlog } from './reducers/blogReducer'
 import { initializeUsers } from './reducers/userReducer'
 import { notify } from './reducers/notificationReducer'
 
@@ -99,14 +99,11 @@ class App extends React.Component {
         }
     }
 
-    deleteBlog = (id) => {
+    deleteBlog = (id, history) => {
 
-        return async () => {
-
-            await blogService.remove(id)
-            
-            const blogs = this.props.blogs.filter(b => b.id !== id)
-            this.setState({ blogs })
+        return () => {
+            this.props.deleteBlog(id)
+            history.push('/')
         }
     }
 
@@ -219,7 +216,7 @@ class App extends React.Component {
                         <Route exact path="/" render={() => <Redirect to="/blogs" />} />
                         <Route exact path="/blogs" render={() => view()} />
                         <Route exact path="/users" render={() => <UserList users={this.props.users} />} />
-                        <Route exact path="/blogs/:id" render={({match}) => {
+                        <Route exact path="/blogs/:id" render={({match, history}) => {
 
                             const blog = findBlogById(match.params.id)
 
@@ -227,7 +224,7 @@ class App extends React.Component {
                                 blog={blog}
                                 loggedUser={this.state.user}
                                 handleLike={this.likeBlog(blog.id)}
-                                handleDelete={this.deleteBlog(blog.id)}
+                                handleDelete={this.deleteBlog(blog.id, history)}
                             />)
                         }} />
 
@@ -253,6 +250,7 @@ const mapDispatchToProps = {
     initializeBlogs,
     initializeUsers,
     createBlog,
+    deleteBlog,
     notify
 }
 

@@ -1,11 +1,11 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { loginAction } from '../reducers/loginReducer'
+import { createUser } from '../reducers/userReducer'
 import { Link } from 'react-router-dom'
 
-const LoginForm = (props) => {
+const RegisterForm = (props) => {
 
-    const login = (e) => {
+    const register = (e) => {
         e.preventDefault()
         const username = e.target.username.value
         const password = e.target.password.value
@@ -13,14 +13,15 @@ const LoginForm = (props) => {
         e.target.username.value = ''
         e.target.password.value = ''
 
-        props.loginAction(username, password)
+        props.createUser(username, password)
+        props.history.push('/')
     }
 
     return (
         <div>
-            <h2>Log in to application</h2>
+            <h2>Register</h2>
 
-            <form onSubmit={login}>
+            <form onSubmit={register}>
                 <div>
                     Username:
                     <input type="text"
@@ -33,17 +34,17 @@ const LoginForm = (props) => {
                            name="password"
                     />
                 </div>
-                <button>Login</button>
+                <button>Register</button>
             </form>
-            <div>no account? <Link to="/signup">register</Link></div>
+            <div>already have account? <Link to="/">login</Link></div>
         </div>
     )
 }
 
 const mapDispatchToProps = {
-    loginAction
+    createUser
 }
 
-const ConnectedLoginForm = connect(null, mapDispatchToProps)(LoginForm)
+const ConnectedRegisterForm = connect(null, mapDispatchToProps)(RegisterForm)
 
-export default ConnectedLoginForm
+export default ConnectedRegisterForm

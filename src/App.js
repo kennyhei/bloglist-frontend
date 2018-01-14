@@ -1,6 +1,7 @@
 import React from 'react'
 import Blog from './components/Blog'
 import LoginForm from './components/LoginForm'
+import RegisterForm from './components/RegisterForm'
 import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
@@ -10,7 +11,7 @@ import { connect } from 'react-redux'
 import { initializeBlogs, createBlog, deleteBlog, likeBlog } from './reducers/blogReducer'
 import { initializeUsers } from './reducers/userReducer'
 import { notify } from './reducers/notificationReducer'
-import { loginAction, logoutAction, loginFieldChange, isLoggedIn } from './reducers/loginReducer'
+import { loginAction, logoutAction, isLoggedIn } from './reducers/loginReducer'
 
 import { BrowserRouter as Router, Route, Link, Redirect } from 'react-router-dom'
 
@@ -83,7 +84,7 @@ class App extends React.Component {
         const findUserById = (id) => this.state.users.find(u => u.id === id)
 
         const view = () => {
-            if (this.props.login.user === null) {
+            if (this.props.loggedUser === null) {
                 return (
                     <div>
                         <LoginForm />
@@ -125,9 +126,9 @@ class App extends React.Component {
                         <div>
                             <Link to="/blogs">blogs</Link> &nbsp;
                             <Link to="/users">users</Link> &nbsp;
-                            {this.props.login.user &&
+                            {this.props.loggedUser &&
                                 <em>
-                                    {this.props.login.user.name} logged in <button onClick={this.logout}>logout</button>
+                                    {this.props.loggedUser.name} logged in <button onClick={this.logout}>logout</button>
                                 </em>
                             }
                         </div>
@@ -137,11 +138,12 @@ class App extends React.Component {
                         <Notification />
                     
                         <Route exact path="/" render={() => <Redirect to="/blogs" />} />
+                        <Route exact path="/signup" render={({history}) => <RegisterForm history={history} />} />
                         <Route exact path="/blogs" render={() => view()} />
                         <Route exact path="/users" render={() => <UserList users={this.props.users} />} />
                         <Route exact path="/blogs/:id" render={({match, history}) => {
 
-                            if (!this.props.login.user) {
+                            if (!this.props.loggedUser) {
                                 return <Redirect to="/" />
                             }
 
@@ -149,7 +151,7 @@ class App extends React.Component {
 
                             return (<Blog
                                 blog={blog}
-                                loggedUser={this.props.login.user}
+                                loggedUser={this.props.loggedUser}
                                 handleLike={(e) => this.props.likeBlog(blog)}
                                 handleDelete={this.deleteBlog(blog.id, history)}
                             />)
@@ -170,7 +172,7 @@ const mapStateToProps = (state) => {
     return {
         blogs: state.blogs,
         users: state.users,
-        login: state.login
+        loggedUser: state.loggedUser
     }
 }
 
@@ -182,7 +184,6 @@ const mapDispatchToProps = {
     likeBlog,
     notify,
     loginAction,
-    loginFieldChange,
     isLoggedIn,
     logoutAction
 }

@@ -2,37 +2,15 @@ import loginService from '../services/login'
 import blogService from '../services/blogs'
 import { notify } from './notificationReducer'
 
-const initialState = {
-    username: '',
-    password: '',
-    user: null,
-}
-
-const loginReducer = (state = initialState, action) => {
-
-    let newState
+const loginReducer = (state = null, action) => {
 
     switch (action.type) {
 
         case 'LOGGED_IN_USER':
-            newState = { username: '', password: '', user: action.data }
-            return newState
+            return action.data
 
-        case 'SET_FIELD':
-            newState = {
-                ...state,
-                [action.data.field]: action.data.value
-            }
-
-            return newState
-
-        case 'SET_USER':
-            newState = {
-                ...state,
-                user: action.data
-            }
-
-            return newState
+        case 'LOGOUT_USER':
+            return null
         
         default:
             return state
@@ -69,15 +47,7 @@ export const logoutAction = () => {
     blogService.setToken(null)
     window.localStorage.removeItem('loggedUser')
     return {
-        type: 'SET_USER',
-        data: null
-    }
-}
-
-export const loginFieldChange = (field, value) => {
-    return {
-        type: 'SET_FIELD',
-        data: { field, value }
+        type: 'LOGOUT_USER'
     }
 }
 
@@ -90,13 +60,12 @@ export const isLoggedIn = () => {
         blogService.setToken(user.token)
 
         return {
-            type: 'SET_USER',
+            type: 'LOGGED_IN_USER',
             data: user
         }
     } else {
         return {
-            type: 'SET_USER',
-            data: null
+            type: 'LOGOUT_USER'
         }
     }
 }

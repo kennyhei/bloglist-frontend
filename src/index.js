@@ -14,7 +14,7 @@ const reducer = combineReducers({
     blogs: blogReducer,
     users: userReducer,
     notification: notificationReducer,
-    login: loginReducer
+    loggedUser: loginReducer
 })
 
 const store = createStore(reducer, applyMiddleware(thunk))

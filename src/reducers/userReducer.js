@@ -1,4 +1,5 @@
 import userService from '../services/users'
+import { notify } from './notificationReducer'
 
 const userReducer = (state = [], action) => {
 
@@ -6,6 +7,9 @@ const userReducer = (state = [], action) => {
 
         case 'INIT_USERS':
             return action.data
+
+        case 'CREATE_USER':
+            return [ ...state, action.data ]
 
         default:
             return state
@@ -23,6 +27,28 @@ export const initializeUsers = () => {
             type: 'INIT_USERS',
             data: users
         })
+    }
+}
+
+export const createUser = (username, password) => {
+
+    return async (dispatch) => {
+
+        try {
+            const userObj = {
+                username,
+                password
+            }
+
+            const newUser = await userService.create(userObj)
+            dispatch({
+                type: 'CREATE_USER',
+                data: newUser
+            })
+        }
+        catch (exception) {
+            dispatch(notify(exception.response.data.error, 'error', 3))
+        }
     }
 }
 

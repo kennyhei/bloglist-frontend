@@ -1,7 +1,5 @@
 import React from 'react'
 import Blog from './components/Blog'
-import blogService from './services/blogs'
-import loginService from './services/login'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
@@ -12,6 +10,7 @@ import { connect } from 'react-redux'
 import { initializeBlogs, createBlog, deleteBlog, likeBlog } from './reducers/blogReducer'
 import { initializeUsers } from './reducers/userReducer'
 import { notify } from './reducers/notificationReducer'
+import { loginAction, logoutAction, loginFieldChange, isLoggedIn } from './reducers/loginReducer'
 
 import { BrowserRouter as Router, Route, Link, Redirect } from 'react-router-dom'
 
@@ -25,25 +24,15 @@ class App extends React.Component {
             // Blog fields
             new_title: '',
             new_author: '',
-            new_url: '',
-
-            // Login fields
-            username: '',
-            password: '',
-            user: null
+            new_url: ''
         }
     }
 
     componentWillMount = async () => {
 
+        this.props.isLoggedIn()
         const usersJSON = window.localStorage.getItem('users')
-        const loggedUserJSON = window.localStorage.getItem('loggedUser')
-
-        if (loggedUserJSON) {
-            const user = JSON.parse(loggedUserJSON)
-            this.setState({ user })
-            blogService.setToken(user.token)
-        }
+        console.log(usersJSON)
 
         if (usersJSON) {
             const users = JSON.parse(usersJSON)
@@ -58,20 +47,13 @@ class App extends React.Component {
         this.setState({ [`new_${e.target.name}`]: e.target.value })
     }
 
-    handleLoginFieldChange = (e) => {
-        this.setState({ [e.target.name]: e.target.value })
-    }
-
     addBlog = async (e) => {
         e.preventDefault()
-
         this.props.createBlog(
             this.state.new_title,
             this.state.new_author,
             this.state.new_url
         )
-
-        this.props.notify(`A new blog '${this.state.new_title}' by ${this.state.new_author} added`, 'info', 3)
 
         this.setState({
             new_title: '',
@@ -82,14 +64,6 @@ class App extends React.Component {
         this.blogForm.toggleVisibility()
     }
 
-    likeBlog = (blog) => {
-
-        return async () => {
-
-            this.props.likeBlog(blog)
-        }
-    }
-
     deleteBlog = (id, history) => {
 
         return () => {
@@ -98,61 +72,21 @@ class App extends React.Component {
         }
     }
 
-    login = async (e) => {
-        e.preventDefault()
-
-        console.log('logging in with', this.state.username, this.state.password)
-        try {
-            const user = await loginService.login({
-              username: this.state.username,
-              password: this.state.password
-            })
-
-            console.log(user)
-
-            window.localStorage.setItem('loggedUser', JSON.stringify(user))
-            blogService.setToken(user.token)
-            this.setState({
-                username: '',
-                password: '',
-                user })
-
-        } catch (error) {
-            this.props.notify('wrong username or password', 'error', 3)
-        }
-    }
-
     logout = () => {
 
-        blogService.setToken(null)
-        window.localStorage.removeItem('loggedUser')
-        this.setState({ user: null })
+        this.props.logoutAction()
     }
 
     render() {
 
-        const findBlogById = (id) => {
-
-            const blog = this.props.blogs.find(b => {
-
-                return b.id === id
-            })
-
-            return blog
-        }
-
-        const findUserById = (id) => this.props.users.find(u => u.id === id)
+        const findBlogById = (id) => this.props.blogs.find(b => b.id === id)
+        const findUserById = (id) => this.state.users.find(u => u.id === id)
 
         const view = () => {
-            if (this.state.user === null) {
+            if (this.props.login.user === null) {
                 return (
                     <div>
-                        <LoginForm
-                            login={this.login}
-                            username={this.state.username}
-                            password={this.state.password}
-                            handleLoginFieldChange={this.handleLoginFieldChange}
-                        />
+                        <LoginForm />
                     </div>
                 )
             } else {
@@ -191,9 +125,9 @@ class App extends React.Component {
                         <div>
                             <Link to="/blogs">blogs</Link> &nbsp;
                             <Link to="/users">users</Link> &nbsp;
-                            {this.state.user &&
+                            {this.props.login.user &&
                                 <em>
-                                    {this.state.user.name} logged in <button onClick={this.logout}>logout</button>
+                                    {this.props.login.user.name} logged in <button onClick={this.logout}>logout</button>
                                 </em>
                             }
                         </div>
@@ -207,12 +141,16 @@ class App extends React.Component {
                         <Route exact path="/users" render={() => <UserList users={this.props.users} />} />
                         <Route exact path="/blogs/:id" render={({match, history}) => {
 
+                            if (!this.props.login.user) {
+                                return <Redirect to="/" />
+                            }
+
                             const blog = findBlogById(match.params.id)
 
                             return (<Blog
                                 blog={blog}
-                                loggedUser={this.state.user}
-                                handleLike={this.likeBlog(blog)}
+                                loggedUser={this.props.login.user}
+                                handleLike={(e) => this.props.likeBlog(blog)}
                                 handleDelete={this.deleteBlog(blog.id, history)}
                             />)
                         }} />
@@ -231,7 +169,8 @@ const mapStateToProps = (state) => {
 
     return {
         blogs: state.blogs,
-        users: state.users
+        users: state.users,
+        login: state.login
     }
 }
 
@@ -241,7 +180,11 @@ const mapDispatchToProps = {
     createBlog,
     deleteBlog,
     likeBlog,
-    notify
+    notify,
+    loginAction,
+    loginFieldChange,
+    isLoggedIn,
+    logoutAction
 }
 
 const ConnectedApp = connect(mapStateToProps, mapDispatchToProps)(App)

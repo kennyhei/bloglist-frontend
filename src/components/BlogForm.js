@@ -1,4 +1,5 @@
 import React from 'react'
+import { Button, FormGroup, ControlLabel, FormControl } from 'react-bootstrap'
 
 const BlogForm = (props) => {
     const { addBlog, new_title, new_author,
@@ -8,31 +9,30 @@ const BlogForm = (props) => {
         <div>
             <h2>Create new</h2>
             <form onSubmit={addBlog}>
-                <div>
-                    Title
-                    <input type="text"
-                           name="title"
-                           value={new_title}
-                           onChange={handleBlogFieldChange}
+                <FormGroup>
+                    <ControlLabel>Title</ControlLabel>
+                    <FormControl
+                        type="text"
+                        name="username"
+                        value={new_title}
+                        onChange={handleBlogFieldChange}
                     />
-                </div>
-                <div>
-                    Author
-                    <input type="text"
-                           name="author"
-                           value={new_author}
-                           onChange={handleBlogFieldChange}
+                    <ControlLabel>Author</ControlLabel>
+                    <FormControl
+                        type="text"
+                        name="author"
+                        value={new_author}
+                        onChange={handleBlogFieldChange}
                     />
-                </div>
-                <div>
-                    URL
-                    <input type="text"
-                           name="url"
-                           value={new_url}
-                           onChange={handleBlogFieldChange}
+                    <ControlLabel>URL</ControlLabel>
+                    <FormControl
+                        type="text"
+                        name="url"
+                        value={new_url}
+                        onChange={handleBlogFieldChange}
                     />
-                </div>
-                <button>Create</button>
+                </FormGroup>
+                <Button bsSize="small" bsStyle="success" type="submit">Create</Button>
             </form>
         </div>
     )

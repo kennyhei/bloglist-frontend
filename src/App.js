@@ -12,6 +12,7 @@ import { initializeBlogs, createBlog, deleteBlog, likeBlog } from './reducers/bl
 import { initializeUsers } from './reducers/userReducer'
 import { notify } from './reducers/notificationReducer'
 import { loginAction, logoutAction, isLoggedIn } from './reducers/loginReducer'
+import { ListGroup, ListGroupItem, Button } from 'react-bootstrap'
 
 import { BrowserRouter as Router, Route, Link, Redirect } from 'react-router-dom'
 
@@ -97,7 +98,7 @@ class App extends React.Component {
     
                 return (
                     <div>
-                        <Togglable buttonLabel="create new blog" ref={component => this.blogForm = component}>
+                        <Togglable buttonLabel="Create new blog" ref={component => this.blogForm = component}>
                             <BlogForm
                                 addBlog={this.addBlog}
                                 new_title={this.state.new_title}
@@ -107,20 +108,21 @@ class App extends React.Component {
                             />
                         </Togglable>
                         
-                        <h3>blogs</h3>
+                        <h3>Blogs</h3>
+                        <ListGroup>
                         {sortedBlogs.map(blog =>
-                            <div key={blog.id}>
+                            <ListGroupItem key={blog.id}>
                                 <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
-                            </div>
-                        )
-                    }
+                            </ListGroupItem>
+                        )}
+                        </ListGroup>
                     </div>
                 )
             }
         }
 
         return (
-            <div>
+            <div className="container">
                 <Router>
                     <div>
                         <div>
@@ -128,7 +130,7 @@ class App extends React.Component {
                             <Link to="/users">users</Link> &nbsp;
                             {this.props.loggedUser &&
                                 <em>
-                                    {this.props.loggedUser.name} logged in <button onClick={this.logout}>logout</button>
+                                    {this.props.loggedUser.name} logged in <Button bsSize="small" onClick={this.logout}>logout</Button>
                                 </em>
                             }
                         </div>

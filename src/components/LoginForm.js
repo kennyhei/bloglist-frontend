@@ -2,6 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { loginAction } from '../reducers/loginReducer'
 import { Link } from 'react-router-dom'
+import { Button } from 'react-bootstrap'
 
 const LoginForm = (props) => {
 
@@ -33,7 +34,7 @@ const LoginForm = (props) => {
                            name="password"
                     />
                 </div>
-                <button>Login</button>
+                <Button bsSize="small" type="submit">Login</Button>
             </form>
             <div>no account? <Link to="/signup">register</Link></div>
         </div>

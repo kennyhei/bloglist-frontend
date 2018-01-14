@@ -1,4 +1,5 @@
 import React from 'react'
+import { Button } from 'react-bootstrap'
 
 class Blog extends React.Component {
     constructor(props) {
@@ -33,10 +34,10 @@ class Blog extends React.Component {
                     <table>
                         <tbody>
                             <tr><td>{this.props.blog.url}</td></tr>
-                            <tr><td>{this.props.blog.likes} likes <button onClick={this.props.handleLike}>like</button></td></tr>
+                            <tr><td>{this.props.blog.likes} likes <Button bsSize="small" bsStyle="success" onClick={this.props.handleLike}>like</Button></td></tr>
                             <tr><td>added by {this.props.blog.author}</td></tr>
                             {showDeleteButton &&
-                            <tr><td><button onClick={this.props.handleDelete}>delete</button></td></tr>
+                            <tr><td><Button bsSize="small" bsStyle="danger" onClick={this.props.handleDelete}>delete</Button></td></tr>
                             }
                         </tbody>
                     </table>

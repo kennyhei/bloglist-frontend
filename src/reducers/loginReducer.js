@@ -27,7 +27,7 @@ export const loginAction = (username, password) => {
                 password
             })
 
-            console.log(user)
+            //console.log(user)
     
             window.localStorage.setItem('loggedUser', JSON.stringify(user))
             blogService.setToken(user.token)

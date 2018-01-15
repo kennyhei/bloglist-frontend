@@ -7,12 +7,14 @@ import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import UserList from './components/UserList'
 import User from './components/User'
+
 import { connect } from 'react-redux'
 import { initializeBlogs, createBlog, deleteBlog, likeBlog } from './reducers/blogReducer'
 import { initializeUsers } from './reducers/userReducer'
 import { notify } from './reducers/notificationReducer'
 import { loginAction, logoutAction, isLoggedIn } from './reducers/loginReducer'
-import { ListGroup, ListGroupItem, Button } from 'react-bootstrap'
+import { Button } from 'react-bootstrap'
+import { Table, Icon } from 'semantic-ui-react'
 
 import { BrowserRouter as Router, Route, Link, Redirect } from 'react-router-dom'
 
@@ -46,6 +48,7 @@ class App extends React.Component {
     }
 
     handleBlogFieldChange = (e) => {
+        console.log(e.target.name, e.target.value)
         this.setState({ [`new_${e.target.name}`]: e.target.value })
     }
 
@@ -109,20 +112,24 @@ class App extends React.Component {
                         </Togglable>
                         
                         <h3>Blogs</h3>
-                        <ListGroup>
-                        {sortedBlogs.map(blog =>
-                            <ListGroupItem key={blog.id}>
-                                <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
-                            </ListGroupItem>
-                        )}
-                        </ListGroup>
+                        <Table celled striped>
+                            <Table.Body>
+                                {sortedBlogs.map(blog =>
+                                <Table.Row key={blog.id}>
+                                    <Table.Cell>
+                                        <Icon name='sticky note'/> <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
+                                    </Table.Cell>
+                                </Table.Row>
+                                )}
+                            </Table.Body>
+                        </Table>
                     </div>
                 )
             }
         }
 
         return (
-            <div className="container">
+            <div className="ui container">
                 <Router>
                     <div>
                         <div>

@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { createUser } from '../reducers/userReducer'
 import { Link } from 'react-router-dom'
-import { Button } from 'react-bootstrap'
+import { Form, Button } from 'semantic-ui-react'
 
 const RegisterForm = (props) => {
 
@@ -22,21 +22,21 @@ const RegisterForm = (props) => {
         <div>
             <h2>Register</h2>
 
-            <form onSubmit={register}>
-                <div>
-                    Username:
+            <Form onSubmit={register}>
+                <Form.Field>
+                    <label>Username</label>
                     <input type="text"
                            name="username"
                     />
-                </div>
-                <div>
-                    Password:
+                </Form.Field>
+                <Form.Field>
+                    <label>Password</label>
                     <input type="password"
                            name="password"
                     />
-                </div>
-                <Button bsSize="small" type="submit">Register</Button>
-            </form>
+                </Form.Field>
+                <Button type="submit">Register</Button>
+            </Form>
             <div>already have account? <Link to="/">login</Link></div>
         </div>
     )

@@ -6,10 +6,10 @@ class Blog extends React.Component {
         super(props)
 
         this.blogStyle = {
-            paddingTop: 10,
-            paddingLeft: 2,
+            padding: 20,
             border: 'solid',
             borderWidth: 1,
+            borderRadius: 10,
             marginBottom: 5
         }
     }

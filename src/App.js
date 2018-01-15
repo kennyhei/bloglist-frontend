@@ -8,15 +8,15 @@ import Togglable from './components/Togglable'
 import UserList from './components/UserList'
 import User from './components/User'
 import MenuInverted from './components/MenuInverted'
+import BlogList from './components/BlogList'
 
 import { connect } from 'react-redux'
 import { initializeBlogs, createBlog, deleteBlog, likeBlog } from './reducers/blogReducer'
 import { initializeUsers } from './reducers/userReducer'
 import { notify } from './reducers/notificationReducer'
 import { loginAction, logoutAction, isLoggedIn } from './reducers/loginReducer'
-import { Table, Icon } from 'semantic-ui-react'
 
-import { BrowserRouter as Router, Route, Link, Redirect } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom'
 
 class App extends React.Component {
     constructor(props) {
@@ -36,7 +36,6 @@ class App extends React.Component {
 
         this.props.isLoggedIn()
         const usersJSON = window.localStorage.getItem('users')
-        console.log(usersJSON)
 
         if (usersJSON) {
             const users = JSON.parse(usersJSON)
@@ -112,17 +111,7 @@ class App extends React.Component {
                         </Togglable>
                         
                         <h3>Blogs</h3>
-                        <Table celled striped>
-                            <Table.Body>
-                                {sortedBlogs.map(blog =>
-                                <Table.Row key={blog.id}>
-                                    <Table.Cell>
-                                        <Icon name='sticky note'/> <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
-                                    </Table.Cell>
-                                </Table.Row>
-                                )}
-                            </Table.Body>
-                        </Table>
+                        <BlogList blogs={sortedBlogs} />>
                     </div>
                 )
             }

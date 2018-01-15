@@ -7,13 +7,13 @@ import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import UserList from './components/UserList'
 import User from './components/User'
+import MenuInverted from './components/MenuInverted'
 
 import { connect } from 'react-redux'
 import { initializeBlogs, createBlog, deleteBlog, likeBlog } from './reducers/blogReducer'
 import { initializeUsers } from './reducers/userReducer'
 import { notify } from './reducers/notificationReducer'
 import { loginAction, logoutAction, isLoggedIn } from './reducers/loginReducer'
-import { Button } from 'react-bootstrap'
 import { Table, Icon } from 'semantic-ui-react'
 
 import { BrowserRouter as Router, Route, Link, Redirect } from 'react-router-dom'
@@ -133,13 +133,7 @@ class App extends React.Component {
                 <Router>
                     <div>
                         <div>
-                            <Link to="/blogs">blogs</Link> &nbsp;
-                            <Link to="/users">users</Link> &nbsp;
-                            {this.props.loggedUser &&
-                                <em>
-                                    {this.props.loggedUser.name} logged in <Button bsSize="small" onClick={this.logout}>logout</Button>
-                                </em>
-                            }
+                            <MenuInverted loggedInUser={this.props.loggedUser} handleLogout={this.logout} />
                         </div>
 
                         <h2>Blog app</h2>

@@ -1,6 +1,8 @@
 import React from 'react'
 import { Button, Menu } from 'semantic-ui-react'
 import { Link } from 'react-router-dom'
+import { connect } from 'react-redux'
+import { logoutAction } from '../reducers/loginReducer'
 
 const MenuInverted = (props) => {
 
@@ -16,7 +18,7 @@ const MenuInverted = (props) => {
             </Menu.Item>
             {props.loggedInUser &&
                 <Menu.Item>
-                    <Button size='small' onClick={props.handleLogout}>logout</Button> &nbsp;
+                    <Button size='small' onClick={(e) => props.logoutAction()}>logout</Button> &nbsp;
                     <em>{props.loggedInUser.name} logged in</em>
                 </Menu.Item>
             }
@@ -24,4 +26,6 @@ const MenuInverted = (props) => {
     )
 }
 
-export default MenuInverted
+const ConnectedMenuInverted = connect(null, { logoutAction })(MenuInverted)
+
+export default ConnectedMenuInverted

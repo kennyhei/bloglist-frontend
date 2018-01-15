@@ -14,7 +14,7 @@ import { connect } from 'react-redux'
 import { initializeBlogs, createBlog, deleteBlog, likeBlog } from './reducers/blogReducer'
 import { initializeUsers } from './reducers/userReducer'
 import { notify } from './reducers/notificationReducer'
-import { loginAction, logoutAction, isLoggedIn } from './reducers/loginReducer'
+import { isLoggedIn } from './reducers/loginReducer'
 
 import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom'
 
@@ -47,7 +47,6 @@ class App extends React.Component {
     }
 
     handleBlogFieldChange = (e) => {
-        console.log(e.target.name, e.target.value)
         this.setState({ [`new_${e.target.name}`]: e.target.value })
     }
 
@@ -74,11 +73,6 @@ class App extends React.Component {
             this.props.deleteBlog(id)
             history.push('/')
         }
-    }
-
-    logout = () => {
-
-        this.props.logoutAction()
     }
 
     render() {
@@ -111,7 +105,7 @@ class App extends React.Component {
                         </Togglable>
                         
                         <h3>Blogs</h3>
-                        <BlogList blogs={sortedBlogs} />>
+                        <BlogList blogs={sortedBlogs} />
                     </div>
                 )
             }
@@ -122,7 +116,7 @@ class App extends React.Component {
                 <Router>
                     <div>
                         <div>
-                            <MenuInverted loggedInUser={this.props.loggedUser} handleLogout={this.logout} />
+                            <MenuInverted loggedInUser={this.props.loggedUser} />
                         </div>
 
                         <h2>Blog app</h2>
@@ -175,9 +169,7 @@ const mapDispatchToProps = {
     deleteBlog,
     likeBlog,
     notify,
-    loginAction,
-    isLoggedIn,
-    logoutAction
+    isLoggedIn
 }
 
 const ConnectedApp = connect(mapStateToProps, mapDispatchToProps)(App)

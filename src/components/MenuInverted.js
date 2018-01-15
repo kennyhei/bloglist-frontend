@@ -6,20 +6,18 @@ import { logoutAction } from '../reducers/loginReducer'
 
 const MenuInverted = (props) => {
 
-    const activeItem = window.location.pathname.substring(1)
-
     return (
         <Menu inverted>
-            <Menu.Item name='blogs' active={activeItem === 'blogs'}>
+            <Menu.Item name='blogs'>
               <Link to="/blogs">Blogs</Link>
             </Menu.Item>
-            <Menu.Item name='users' active={activeItem === 'users'}>
+            <Menu.Item name='users'>
                 <Link to="/users">Users</Link>
             </Menu.Item>
             {props.loggedInUser &&
                 <Menu.Item>
                     <Button size='small' onClick={(e) => props.logoutAction()}>logout</Button> &nbsp;
-                    <em>{props.loggedInUser.name} logged in</em>
+                    <em>{props.loggedInUser.username} logged in</em>
                 </Menu.Item>
             }
         </Menu>

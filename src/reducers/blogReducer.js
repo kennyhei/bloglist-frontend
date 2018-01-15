@@ -1,5 +1,6 @@
 import blogService from '../services/blogs'
 import { notify } from './notificationReducer'
+import { initializeUsers } from './userReducer'
 
 const blogReducer = (state = [], action) => {
 
@@ -56,6 +57,9 @@ export const createBlog = (title, author, url) => {
                 type: 'NEW_BLOG',
                 data: newBlog
             })
+
+            // Update users
+            dispatch(initializeUsers())
 
             dispatch(notify(`A new blog '${title}' by ${author} added`, 'info', 3))
         } catch (exception) {

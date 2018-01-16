@@ -23,8 +23,6 @@ class App extends React.Component {
         super(props)
 
         this.state = {
-            users: [],
-
             // Blog fields
             new_title: '',
             new_author: '',
@@ -35,13 +33,6 @@ class App extends React.Component {
     componentWillMount = async () => {
 
         this.props.isLoggedIn()
-        const usersJSON = window.localStorage.getItem('users')
-
-        if (usersJSON) {
-            const users = JSON.parse(usersJSON)
-            this.setState({ users })
-        }
-
         this.props.initializeBlogs()
         this.props.initializeUsers()
     }
@@ -77,8 +68,10 @@ class App extends React.Component {
 
     render() {
 
+        console.log(this.props.users)
+
         const findBlogById = (id) => this.props.blogs.find(b => b.id === id)
-        const findUserById = (id) => this.state.users.find(u => u.id === id)
+        const findUserById = (id) => this.props.users.find(u => u.id === id)
 
         const view = () => {
             if (this.props.loggedUser === null) {

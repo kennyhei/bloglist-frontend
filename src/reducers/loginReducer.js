@@ -17,7 +17,7 @@ const loginReducer = (state = null, action) => {
     }
 }
 
-export const loginAction = (username, password) => {
+export const loginAction = (username, password, history) => {
 
     return async (dispatch) => {
 
@@ -36,7 +36,13 @@ export const loginAction = (username, password) => {
                 type: 'LOGGED_IN_USER',
                 data: user
             })
+
+            if (history) {
+                history.push('/')
+            }
+
         } catch (exception) {
+            console.log(exception)
             dispatch(notify('wrong username or password', 'error', 3))
         }
     }

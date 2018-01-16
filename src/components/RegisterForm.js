@@ -14,8 +14,7 @@ const RegisterForm = (props) => {
         e.target.username.value = ''
         e.target.password.value = ''
 
-        props.createUser(username, password)
-        props.history.push('/')
+        props.createUser(username, password, props.history)
     }
 
     return (

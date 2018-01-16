@@ -1,5 +1,6 @@
 import userService from '../services/users'
 import { notify } from './notificationReducer'
+import { loginAction } from './loginReducer'
 
 const userReducer = (state = [], action) => {
 
@@ -30,7 +31,7 @@ export const initializeUsers = () => {
     }
 }
 
-export const createUser = (username, password) => {
+export const createUser = (username, password, history) => {
 
     return async (dispatch) => {
 
@@ -45,6 +46,9 @@ export const createUser = (username, password) => {
                 type: 'CREATE_USER',
                 data: newUser
             })
+
+            // Login after signing up
+            dispatch(loginAction(username, password, history))
         }
         catch (exception) {
             dispatch(notify(exception.response.data.error, 'error', 3))
